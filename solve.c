@@ -7,71 +7,72 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <string.h>
 
 void sys_err(char *msg)
 {
     puts(msg);
     exit(1);
 }
-void reader(char *file)
+
+void solve(char *str, int size, int *res)
 {
+    int ps = 0;
+    int ss = 0;
+    for (size_t i = 0; i < size; i++)
+    {
+        if ('A' <= str[i] && 'Z' >= str[i])
+        {
+            ps++;
+        }
+        if ('a' <= str[i] && 'z' >= str[i])
+        {
+            ss++;
+        }
+    }
+    res[0] = ps;
+    res[1] = ss;
 }
 
-void writer(char *file)
-{
-}
 int main(int argc, char **argv)
 {
+
+    if (argc < 3)
+    {
+        fprintf(stderr, "Too few arguments\n");
+
+        exit(1);
+    }
     int fd[2];
-    int filed;
+    fd[0];
+    fd[1];
     int size = 5000;
     pipe(fd);
+    dup2(fd[0], 10);
+    dup2(fd[1], 11);
     char buffer[size];
     ssize_t read_bytes;
-    ssize_t written_bytes;
+
     if (fork())
     {
-
-        if (argc < 3)
-        {
-            fprintf(stderr, "Too few arguments\n");
-            exit(1);
-        }
-        filed = open(argv[1], O_RDONLY);
-
-        if (fd < 0)
-        {
-            fprintf(stderr, "Cannot open file\n");
-            exit(1);
-        }
-        read_bytes = read(filed, buffer, size);
-
-        if (read_bytes < 0)
-        {
-            fprintf(stderr, "myread: Cannot read file\n");
-            exit(1);
-        }
-        close(filed);
-        write(fd[1], buffer, read_bytes);
-        exit(0);
+        execv("./reader.o", argv);
     }
+
     read_bytes = read(fd[0], buffer, size);
+    int res[2];
+    solve(buffer, read_bytes, res);
 
-    write(fd[1], buffer, read_bytes);
+    memcpy(buffer, res, 2 * sizeof(int));
+
+    write(fd[1], buffer, 2 * sizeof(int));
 
     if (fork())
     {
-        read_bytes = read(fd[0], buffer, size);
-        filed = open(argv[2], O_WRONLY);
-        written_bytes = write(filed, buffer, read_bytes);
-        if (written_bytes != read_bytes)
-        {
-            fprintf(stderr, "Cannot write\n");
-            exit(1);
-        }
-        close(filed);
-        exit(0);
+        execv("./writer.o", argv);
     }
 
-    printf("%s", buffer);
+    close(fd[0]);
+    close(fd[1]);
+    close(10);
+    close(11);
 }
