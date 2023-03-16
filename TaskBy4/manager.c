@@ -36,15 +36,38 @@ void solve(char *str, int size, int *res)
 
 int main(int argc, char **argv)
 {
+
+    if (argc < 3)
+    {
+        fprintf(stderr, "Too few arguments\n");
+
+        exit(1);
+    }
+    int fd[2];
+    fd[0];
+    fd[1];
     int size = 5000;
+    pipe(fd);
+    dup2(fd[0], 10);
+    dup2(fd[1], 11);
     char buffer[size];
     ssize_t read_bytes;
 
-    read_bytes = read(10, buffer, size);
-    int res[2];
-    solve(buffer, read_bytes, res);
+    if (fork())
+    {
+        execv("./reader.o", argv);
+    }
+    if (fork())
+    {
+        execv("./solve.o", argv);
+    }
+    if (fork())
+    {
+        execv("./writer.o", argv);
+    }
 
-    memcpy(buffer, res, 2 * sizeof(int));
-
-    write(11, buffer, 2 * sizeof(int));
+    close(fd[0]);
+    close(fd[1]);
+    close(10);
+    close(11);
 }
