@@ -17,21 +17,12 @@ void sys_err(char *msg)
 
 int main(int argc, char **argv)
 {
-    printf("uuuu");
-    int rtosfd;
     int size = 5000;
     int filed;
     char buffer[size];
-    printf("uuuu");
-    char *rtosfifo = "reader_to_solve_fifo";
-    char *stowfifo = "solve_to_writer_fifo";
-    int stowfd;
     ssize_t read_bytes;
     ssize_t written_bytes;
 
-    mkfifo(rtosfifo, 0010);
-    mkfifo(stowfifo, 0011);
-    printf("uuuu");
     filed = open(argv[1], O_RDONLY);
     if (filed < 0)
     {
@@ -46,13 +37,11 @@ int main(int argc, char **argv)
         exit(1);
     }
     close(filed);
-    rtosfd = open(rtosfifo, O_WRONLY);
-    write(rtosfd, buffer, read_bytes);
-    close(rtosfd);
-
+    write(11, buffer, read_bytes);
+    close(11);
     int res[2];
-    read_bytes = read(stowfd, buffer, size);
-    close(stowfd);
+    read_bytes = read(20, buffer, size);
+    close(20);
     filed = open(argv[2], O_WRONLY);
 
     memcpy(res, buffer, read_bytes);
