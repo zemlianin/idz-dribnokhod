@@ -44,12 +44,14 @@ int main(int argc, char **argv)
         exit(1);
     }
     int fd[2];
-    fd[0];
-    fd[1];
+    int fd2[2];
     int size = 5000;
     pipe(fd);
+    pipe(fd2);
     dup2(fd[0], 10);
     dup2(fd[1], 11);
+    dup2(fd2[0], 20);
+    dup2(fd2[1], 21);
     char buffer[size];
     ssize_t read_bytes;
 
@@ -64,15 +66,14 @@ int main(int argc, char **argv)
 
     memcpy(buffer, res, 2 * sizeof(int));
 
-    write(fd[1], buffer, 2 * sizeof(int));
-
-    if (fork())
-    {
-        execv("./writer.o", argv);
-    }
+    write(fd2[1], buffer, 2 * sizeof(int));
 
     close(fd[0]);
     close(fd[1]);
     close(10);
     close(11);
+    close(fd2[0]);
+    close(fd2[1]);
+    close(20);
+    close(21);
 }

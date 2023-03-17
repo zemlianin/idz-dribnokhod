@@ -36,38 +36,34 @@ void solve(char *str, int size, int *res)
 
 int main(int argc, char **argv)
 {
-
+    printf("hvghv");
     if (argc < 3)
     {
         fprintf(stderr, "Too few arguments\n");
 
         exit(1);
     }
-    int fd[2];
-    fd[0];
-    fd[1];
+    int rtosfd;
+    int stowfd;
     int size = 5000;
-    pipe(fd);
-    dup2(fd[0], 10);
-    dup2(fd[1], 11);
+    char *rtosfifo = "reader_to_solve_fifo";
+    char *stowfifo = "solve_to_writer_fifo";
+    mkfifo(rtosfifo, 0010);
+    mkfifo(stowfifo, 0011);
     char buffer[size];
     ssize_t read_bytes;
+    printf("hvghv");
+    rtosfd = open(rtosfifo, O_RDONLY);
+    stowfd = open(stowfifo, O_WRONLY);
 
-    if (fork())
-    {
-        execv("./reader.o", argv);
-    }
-    if (fork())
-    {
-        execv("./solve.o", argv);
-    }
-    if (fork())
-    {
-        execv("./writer.o", argv);
-    }
+    read_bytes = read(rtosfd, buffer, size);
+    close(rtosfd);
+    int res[2];
+    solve(buffer, read_bytes, res);
+    memcpy(buffer, res, 2 * sizeof(int));
 
-    close(fd[0]);
-    close(fd[1]);
-    close(10);
-    close(11);
+    write(stowfd, buffer, 2 * sizeof(int));
+    close(stowfd);
+    printf("hvghv");
+    return 0;
 }
