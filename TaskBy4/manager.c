@@ -15,25 +15,6 @@ void sys_err(char *msg)
     exit(1);
 }
 
-void solve(char *str, int size, int *res)
-{
-    int ps = 0;
-    int ss = 0;
-    for (size_t i = 0; i < size; i++)
-    {
-        if ('A' <= str[i] && 'Z' >= str[i])
-        {
-            ps++;
-        }
-        if ('a' <= str[i] && 'z' >= str[i])
-        {
-            ss++;
-        }
-    }
-    res[0] = ps;
-    res[1] = ss;
-}
-
 int main(int argc, char **argv)
 {
 
@@ -44,12 +25,14 @@ int main(int argc, char **argv)
         exit(1);
     }
     int fd[2];
-    fd[0];
-    fd[1];
+    int fdw[2];
     int size = 5000;
     pipe(fd);
+    pipe(fdw);
     dup2(fd[0], 10);
     dup2(fd[1], 11);
+    dup2(fdw[0], 20);
+    dup2(fdw[1], 21);
     char buffer[size];
     ssize_t read_bytes;
 
@@ -70,4 +53,8 @@ int main(int argc, char **argv)
     close(fd[1]);
     close(10);
     close(11);
+    close(fdw[0]);
+    close(fdw[1]);
+    close(20);
+    close(21);
 }

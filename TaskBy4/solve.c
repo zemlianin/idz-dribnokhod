@@ -46,5 +46,5 @@ int main(int argc, char **argv)
 
     memcpy(buffer, res, 2 * sizeof(int));
 
-    write(11, buffer, 2 * sizeof(int));
+    write(21, buffer, 2 * sizeof(int));
 }

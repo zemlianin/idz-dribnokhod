@@ -23,7 +23,7 @@ int main(int argc, char **argv)
     ssize_t read_bytes;
     ssize_t written_bytes;
     int res[2];
-    read_bytes = read(10, buffer, size);
+    read_bytes = read(20, buffer, size);
     filed = open(argv[2], O_WRONLY);
 
     memcpy(res, buffer, read_bytes);
