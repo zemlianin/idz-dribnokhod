@@ -17,18 +17,25 @@ void sys_err(char *msg)
 
 int main(int argc, char **argv)
 {
+    int rtosfd;
+    char *rtosfifo = "reader_to_solve_fifo";
     int size = 5000;
     int filed;
     char buffer[size];
     ssize_t read_bytes;
+    char *stowfifo = "solve_to_writer_fifo";
+    int stowfd;
     ssize_t written_bytes;
+    int res[2];
 
     filed = open(argv[1], O_RDONLY);
+
     if (filed < 0)
     {
         fprintf(stderr, "Cannot open file\n");
         exit(1);
     }
+
     read_bytes = read(filed, buffer, size);
 
     if (read_bytes < 0)
@@ -36,12 +43,18 @@ int main(int argc, char **argv)
         fprintf(stderr, "myread: Cannot read file\n");
         exit(1);
     }
+
     close(filed);
-    write(11, buffer, read_bytes);
-    close(11);
-    int res[2];
-    read_bytes = read(20, buffer, size);
-    close(20);
+
+    rtosfd = open(rtosfifo, O_WRONLY);
+    write(rtosfd, buffer, read_bytes);
+    close(rtosfd);
+    stowfd = open(stowfifo, O_RDONLY);
+
+    read_bytes = read(stowfd, buffer, size);
+
+    close(stowfd);
+    remove(stowfifo);
     filed = open(argv[2], O_WRONLY);
 
     memcpy(res, buffer, read_bytes);

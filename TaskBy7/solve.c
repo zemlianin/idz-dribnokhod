@@ -36,23 +36,24 @@ void solve(char *str, int size, int *res)
 
 int main(int argc, char **argv)
 {
-    if (argc < 3)
-    {
-        fprintf(stderr, "Too few arguments\n");
-
-        exit(1);
-    }
+    int rtosfd;
+    int stowfd;
+    char *rtosfifo = "reader_to_solve_fifo";
+    char *stowfifo = "solve_to_writer_fifo";
     int size = 5000;
     char buffer[size];
     ssize_t read_bytes;
 
-    read_bytes = read(10, buffer, size);
-    close(10);
+    rtosfd = open(rtosfifo, O_RDONLY);
+    stowfd = open(stowfifo, O_WRONLY);
+
+    read_bytes = read(rtosfd, buffer, size);
+    close(rtosfd);
+    remove(rtosfifo);
     int res[2];
     solve(buffer, read_bytes, res);
     memcpy(buffer, res, 2 * sizeof(int));
 
-    write(21, buffer, 2 * sizeof(int));
-    close(21);
-    return 0;
+    write(stowfd, buffer, 2 * sizeof(int));
+    close(stowfd);
 }
