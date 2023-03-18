@@ -20,6 +20,9 @@ int main(int argc, char **argv)
     int filed;
     char buffer[size];
     ssize_t read_bytes;
+    char *rtosfifo = "reader_to_solve_fifo";
+    int rtosfd;
+    rtosfd = open(rtosfifo, O_WRONLY);
 
     filed = open(argv[1], O_RDONLY);
 
@@ -30,6 +33,7 @@ int main(int argc, char **argv)
     }
 
     read_bytes = read(filed, buffer, size);
+
     if (read_bytes < 0)
     {
         fprintf(stderr, "myread: Cannot read file\n");
@@ -37,7 +41,7 @@ int main(int argc, char **argv)
     }
 
     close(filed);
-    write(11, buffer, read_bytes);
-    close(11);
+    write(rtosfd, buffer, read_bytes);
+    close(rtosfd);
     return 0;
 }

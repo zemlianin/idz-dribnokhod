@@ -23,8 +23,8 @@ int main(int argc, char **argv)
     int stowfd1;
     char *rtosfifo = "reader_to_solve_fifo";
     char *stowfifo = "solve_to_writer_fifo";
-    mkfifo(rtosfifo, 0010);
-    mkfifo(stowfifo, 0011);
+    mkfifo(rtosfifo, 0777);
+    mkfifo(stowfifo, 0777);
     rtosfd = open(rtosfifo, O_RDONLY);
     stowfd = open(stowfifo, O_WRONLY);
     rtosfd1 = open(rtosfifo, O_WRONLY);

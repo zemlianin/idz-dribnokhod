@@ -34,8 +34,6 @@ int main(int argc, char **argv)
     ssize_t written_bytes;
     int res[2];
 
-    mkfifo(rtosfifo, 0010);
-
     filed = open(argv[1], O_RDONLY);
 
     if (filed < 0)
@@ -53,15 +51,24 @@ int main(int argc, char **argv)
     }
 
     close(filed);
-    rtosfd = open(rtosfifo, O_WRONLY);
+
+    while ((rtosfd = open(rtosfifo, O_WRONLY)) == -1)
+    {
+        fprintf(stdout, "Процесс чтения ожидает создания канала\n");
+        sleep(5);
+    }
     write(rtosfd, buffer, read_bytes);
     close(rtosfd);
+    while ((stowfd = open(stowfifo, O_RDONLY)) == -1)
+    {
+        fprintf(stdout, "Процесс чтения ожидает создания канала\n");
+        sleep(5);
+    }
 
-    mkfifo(stowfifo, 0011);
-    stowfd = open(stowfifo, O_RDONLY);
     read_bytes = read(stowfd, buffer, size);
 
     close(stowfd);
+    remove(stowfifo);
     filed = open(argv[2], O_WRONLY);
 
     memcpy(res, buffer, read_bytes);

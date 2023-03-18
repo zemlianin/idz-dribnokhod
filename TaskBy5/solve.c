@@ -40,11 +40,22 @@ int main(int argc, char **argv)
     char buffer[size];
     ssize_t read_bytes;
 
-    read_bytes = read(10, buffer, size);
-    close(10);
+    char *rtosfifo = "reader_to_solve_fifo";
+    int rtosfd;
+    rtosfd = open(rtosfifo, O_RDONLY);
+
+    read_bytes = read(rtosfd, buffer, size);
+    close(rtosfd);
+    remove(rtosfifo);
     int res[2];
+
     solve(buffer, read_bytes, res);
     memcpy(buffer, res, 2 * sizeof(int));
-    write(21, buffer, 2 * sizeof(int));
-    close(21);
+
+    char *stowfifo = "solve_to_writer_fifo";
+    int stowfd;
+    stowfd = open(stowfifo, O_WRONLY);
+
+    write(stowfd, buffer, 2 * sizeof(int));
+    close(stowfd);
 }

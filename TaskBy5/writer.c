@@ -24,8 +24,14 @@ int main(int argc, char **argv)
     ssize_t written_bytes;
     int res[2];
 
-    read_bytes = read(20, buffer, size);
-    close(20);
+    char *stowfifo = "solve_to_writer_fifo";
+    int stowfd;
+    stowfd = open(stowfifo, O_RDONLY);
+
+    read_bytes = read(stowfd, buffer, size);
+    close(stowfd);
+    remove(stowfifo);
+
     filed = open(argv[2], O_WRONLY);
     memcpy(res, buffer, read_bytes);
     sprintf(buffer, "%d", res[0]);

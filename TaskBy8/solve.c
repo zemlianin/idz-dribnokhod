@@ -43,14 +43,23 @@ int main(int argc, char **argv)
     ssize_t read_bytes;
     char *rtosfifo = "reader_to_solve_fifo";
     char *stowfifo = "solve_to_writer_fifo";
-    mkfifo(rtosfifo, 0010);
-    mkfifo(stowfifo, 0011);
+    if (mkfifo(rtosfifo, 0777))
+    {
+        perror("mkfifo");
+        return 1;
+    }
+    if (mkfifo(stowfifo, 0777))
+    {
+        perror("mkfifo");
+        return 1;
+    }
 
     rtosfd = open(rtosfifo, O_RDONLY);
     stowfd = open(stowfifo, O_WRONLY);
 
     read_bytes = read(rtosfd, buffer, size);
     close(rtosfd);
+    remove(rtosfifo);
     int res[2];
     solve(buffer, read_bytes, res);
     memcpy(buffer, res, 2 * sizeof(int));
