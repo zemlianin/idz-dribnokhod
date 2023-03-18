@@ -17,7 +17,7 @@ bash run-tests.sh
 ```
 bash run.sh
 ```
-- К каждому решению прикреплен отдельный markdown файл с пояснениями к нему:
+- К каждому решению прикреплен отдельный markdown файл-отчет с пояснениями к нему:
 1. На 4 балла : [link to file](https://github.com/zemlianin/idz-dribnokhod/blob/master/TaskBy4/README.md)
 1. На 5 баллов : [link to file](https://github.com/zemlianin/idz-dribnokhod/blob/master/TaskBy5/README.md)
 1. На 6 баллов : [link to file](https://github.com/zemlianin/idz-dribnokhod/blob/master/TaskBy6/README.md)
