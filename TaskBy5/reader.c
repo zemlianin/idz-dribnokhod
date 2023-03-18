@@ -16,20 +16,10 @@ void sys_err(char *msg)
 
 int main(int argc, char **argv)
 {
-    if (argc < 2)
-    {
-        fprintf(stderr, "Too few arguments\n");
-
-        exit(1);
-    }
-    int rtosfd;
-    char *rtosfifo = "reader_to_solve_fifo";
     int size = 5000;
     int filed;
     char buffer[size];
     ssize_t read_bytes;
-
-    mkfifo(rtosfifo, 0010);
 
     filed = open(argv[1], O_RDONLY);
 
@@ -40,7 +30,6 @@ int main(int argc, char **argv)
     }
 
     read_bytes = read(filed, buffer, size);
-
     if (read_bytes < 0)
     {
         fprintf(stderr, "myread: Cannot read file\n");
@@ -48,8 +37,7 @@ int main(int argc, char **argv)
     }
 
     close(filed);
-    rtosfd = open(rtosfifo, O_WRONLY);
-    write(rtosfd, buffer, read_bytes);
-    close(rtosfd);
+    write(11, buffer, read_bytes);
+    close(11);
     return 0;
 }

@@ -36,25 +36,15 @@ void solve(char *str, int size, int *res)
 
 int main(int argc, char **argv)
 {
-    int rtosfd;
-    int stowfd;
     int size = 5000;
     char buffer[size];
     ssize_t read_bytes;
-    char *rtosfifo = "reader_to_solve_fifo";
-    char *stowfifo = "solve_to_writer_fifo";
-    mkfifo(rtosfifo, 0010);
-    mkfifo(stowfifo, 0011);
 
-    rtosfd = open(rtosfifo, O_RDONLY);
-    stowfd = open(stowfifo, O_WRONLY);
-
-    read_bytes = read(rtosfd, buffer, size);
-    close(rtosfd);
+    read_bytes = read(10, buffer, size);
+    close(10);
     int res[2];
     solve(buffer, read_bytes, res);
     memcpy(buffer, res, 2 * sizeof(int));
-
-    write(stowfd, buffer, 2 * sizeof(int));
-    close(stowfd);
+    write(21, buffer, 2 * sizeof(int));
+    close(21);
 }

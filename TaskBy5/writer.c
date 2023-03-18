@@ -17,14 +17,6 @@ void sys_err(char *msg)
 
 int main(int argc, char **argv)
 {
-    if (argc < 2)
-    {
-        fprintf(stderr, "Too few arguments\n");
-
-        exit(1);
-    }
-    char *stowfifo = "solve_to_writer_fifo";
-    int stowfd;
     int size = 5000;
     int filed;
     char buffer[size];
@@ -32,17 +24,12 @@ int main(int argc, char **argv)
     ssize_t written_bytes;
     int res[2];
 
-    mkfifo(stowfifo, 0011);
-    stowfd = open(stowfifo, O_RDONLY);
-
-    read_bytes = read(stowfd, buffer, size);
-    close(stowfd);
-    filed = open(argv[1], O_WRONLY);
-
+    read_bytes = read(20, buffer, size);
+    close(20);
+    filed = open(argv[2], O_WRONLY);
     memcpy(res, buffer, read_bytes);
     sprintf(buffer, "%d", res[0]);
     sprintf(&buffer[sizeof(int)], "%d", res[1]);
-
     written_bytes = write(filed, buffer, read_bytes);
 
     if (written_bytes != read_bytes)
